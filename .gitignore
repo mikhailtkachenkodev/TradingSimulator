@@ -1,0 +1,20 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# IDE files
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.user
+.*/
+
+# Outputs
+*.exe
+*.o
+*.a
+*.lib
+*.log
+*.csv
