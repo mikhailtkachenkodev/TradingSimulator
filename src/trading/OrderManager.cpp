@@ -14,9 +14,9 @@ Price OrderManager::getTotalPnL(Price currentMarketPrice) const {
 
 OrderIdentifier OrderManager::SendOrder(const Order& order) {
   auto order_id = exchange_api_.sendOrder(
-      order, std::bind(&OrderManager::HandleRequestReply, this,
-                       std::placeholders::_1, std::placeholders::_2,
-                       std::placeholders::_3));
+      order,
+      std::bind(&OrderManager::HandleRequestReply, this, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3));
   orders_[order_id] = order;
   exchange_api_.poll();
   return order_id;
@@ -53,12 +53,11 @@ void OrderManager::fixOrder(OrderSide side, Price price, Volume volume) {
   current_position_ += volume * (side == OrderSide::Buy ? 1 : -1);
 }
 
-void OrderManager::HandleRequestReply(OrderIdentifier id,
-                                      ReplyStatus reply_status,
+void OrderManager::HandleRequestReply(OrderIdentifier id, Status reply_status,
                                       std::string_view reply_error) {
   Order order = orders_[id];
 
-  if (reply_status == ReplyStatus::Executed) {
+  if (reply_status == Status::Executed) {
     fixOrder(order.side, order.price, order.volume);
   }
 

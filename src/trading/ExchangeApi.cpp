@@ -7,9 +7,8 @@ OrderIdentifier ExchangeApi::sendOrder(const Order& order,
   const OrderIdentifier current_id = nextId_++;
 
   std::uniform_real_distribution<double> dist(0.0, 100.0);
-  const ReplyStatus rp_status = dist(rng_) < rejection_percent_
-                                    ? ReplyStatus::Rejected
-                                    : ReplyStatus::Executed;
+  const Status rp_status =
+      dist(rng_) < rejection_percent_ ? Status::Rejected : Status::Executed;
 
   pending_events_.push_back(
       {.id = current_id, .reply_status = rp_status, .cb = std::move(cb)});
@@ -21,7 +20,7 @@ void ExchangeApi::poll() {
   for (const auto& [id, reply_status, cb] : pending_events_) {
     if (cb) {
       cb(id, reply_status,
-         reply_status == ReplyStatus::Rejected ? "Random rejection" : "");
+         reply_status == Status::Rejected ? "Random rejection" : "");
     }
   }
 

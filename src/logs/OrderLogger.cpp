@@ -9,18 +9,18 @@ OrderLogger::OrderLogger(const Config& config)
 }
 
 std::optional<std::string> OrderLogger::writeOrder(
-    OrderSide order_side, Price price, Volume volume, ReplyStatus status,
+    OrderSide order_side, Price price, Volume volume, Status status,
     const std::string& error_text, Price total_pnl) {
   auto order_side_string = order_side == OrderSide::Buy ? "Buy" : "Sell";
   std::string status_string;
   switch (status) {
-    case ReplyStatus::Executed:
+    case Status::Executed:
       status_string = "Executed";
       break;
-    case ReplyStatus::Rejected:
+    case Status::Rejected:
       status_string = "Rejected";
       break;
-    case ReplyStatus::Pending:
+    case Status::Pending:
       status_string = "Pending";
       break;
   }

@@ -15,7 +15,7 @@ class OrderLogger {
  public:
   explicit OrderLogger(const Config& config);
   std::optional<std::string> writeOrder(OrderSide order_side, Price price,
-                                        Volume volume, ReplyStatus status,
+                                        Volume volume, Status status,
                                         const std::string& error_text,
                                         Price total_pnl);
 

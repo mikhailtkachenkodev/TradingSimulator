@@ -11,7 +11,7 @@ using OrderIdentifier = uint64_t;
 
 enum class OrderSide { Buy, Sell };
 
-enum class ReplyStatus { Pending, Executed, Rejected };
+enum class Status { Pending, Executed, Rejected };
 
 inline bool isVolumeEqual(const Volume a, const Volume b) {
   return std::abs(a - b) < 1e-9;
@@ -32,7 +32,7 @@ struct Tick {
 
 struct IHandler {
   virtual ~IHandler() = default;
-  virtual void HandleRequestReply(OrderIdentifier id, ReplyStatus reply_status,
+  virtual void HandleRequestReply(OrderIdentifier id, Status reply_status,
                                   std::string_view reply_error) = 0;
 };
 #endif  // TRADINGSIMULATOR_TYPES_H

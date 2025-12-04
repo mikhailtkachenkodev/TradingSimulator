@@ -17,7 +17,7 @@ class OrderManager : IHandler {
   void onSellSignal(Price price, Volume volume);
 
  private:
-  void HandleRequestReply(OrderIdentifier id, ReplyStatus reply_status,
+  void HandleRequestReply(OrderIdentifier id, Status reply_status,
                           std::string_view reply_error) override;
   void fixOrder(OrderSide ordSide, Price price, Volume volume);
   [[nodiscard]] Price getTotalPnL(Price currentMarketPrice) const;

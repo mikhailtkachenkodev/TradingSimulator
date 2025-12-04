@@ -8,7 +8,7 @@
 #include "common/Types.h"
 
 using ExchangeCallback =
-    std::function<void(OrderIdentifier, ReplyStatus, std::string_view)>;
+    std::function<void(OrderIdentifier, Status, std::string_view)>;
 
 class ExchangeApi {
  public:
@@ -20,7 +20,7 @@ class ExchangeApi {
  private:
   struct PendingEvent {
     OrderIdentifier id;
-    ReplyStatus reply_status;
+    Status reply_status;
     ExchangeCallback cb;
   };
 
