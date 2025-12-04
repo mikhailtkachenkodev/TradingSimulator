@@ -9,48 +9,48 @@ OrderManager::OrderManager(const Config& config)
 OrderManager::~OrderManager() = default;
 
 Price OrderManager::getTotalPnL(Price currentMarketPrice) const {
-  return pnl + currentMarketPrice * current_volume_;
+  return pnl_ + currentMarketPrice * current_position_;
+}
+
+OrderIdentifier OrderManager::SendOrder(const Order& order) {
+  auto order_id = exchange_api_.sendOrder(
+      order, std::bind(&OrderManager::HandleRequestReply, this,
+                       std::placeholders::_1, std::placeholders::_2,
+                       std::placeholders::_3));
+  orders_[order_id] = order;
+  exchange_api_.poll();
+  return order_id;
 }
 
 void OrderManager::onBuySignal(Price price, Volume volume) {
-  if (isVolumeEqual(current_volume_, max_position_)) {
+  if (isVolumeEqual(current_position_, max_position_)) {
     return;
   }
 
-  Volume remaining_volume = max_position_ - current_volume_;
-  Volume volume_to_buy = std::min(volume, remaining_volume);
+  Volume remaining = max_position_ - current_position_;
+  Volume volume_to_buy = std::min(volume, remaining);
 
   if (volume_to_buy <= 0) return;
 
-  auto ord_id = exchange_api_.sendOrder(
-      {OrderSide::Buy, price, volume_to_buy},
-      std::bind(&OrderManager::HandleRequestReply, this, std::placeholders::_1,
-                std::placeholders::_2, std::placeholders::_3));
-  orders_[ord_id] = {OrderSide::Buy, price, volume_to_buy};
-  exchange_api_.poll();
+  SendOrder({OrderSide::Buy, price, volume_to_buy});
 }
 
 void OrderManager::onSellSignal(Price price, Volume volume) {
-  if (isVolumeEqual(current_volume_, min_position_)) {
+  if (isVolumeEqual(current_position_, min_position_)) {
     return;
   }
 
-  Volume room_to_sell = current_volume_ - min_position_;
+  Volume room_to_sell = current_position_ - min_position_;
   Volume volume_to_sell = std::min(volume, room_to_sell);
 
   if (volume_to_sell <= 0) return;
 
-  auto ord_id = exchange_api_.sendOrder(
-      {OrderSide::Sell, price, volume_to_sell},
-      std::bind(&OrderManager::HandleRequestReply, this, std::placeholders::_1,
-                std::placeholders::_2, std::placeholders::_3));
-  orders_[ord_id] = {OrderSide::Sell, price, volume_to_sell};
-  exchange_api_.poll();
+  SendOrder({OrderSide::Sell, price, volume_to_sell});
 }
 
-void OrderManager::fixOrder(OrderSide ordSide, Price price, Volume volume) {
-  pnl += price * volume * (ordSide == OrderSide::Buy ? -1 : 1);
-  current_volume_ += volume * (ordSide == OrderSide::Buy ? 1 : -1);
+void OrderManager::fixOrder(OrderSide side, Price price, Volume volume) {
+  pnl_ += price * volume * (side == OrderSide::Buy ? -1 : 1);
+  current_position_ += volume * (side == OrderSide::Buy ? 1 : -1);
 }
 
 void OrderManager::HandleRequestReply(OrderIdentifier id,

@@ -11,6 +11,8 @@ class OrderManager : IHandler {
   explicit OrderManager(const Config& config);
   ~OrderManager() override;
 
+  OrderIdentifier SendOrder(const Order& order);
+
   void onBuySignal(Price price, Volume volume);
   void onSellSignal(Price price, Volume volume);
 
@@ -23,8 +25,8 @@ class OrderManager : IHandler {
   ExchangeApi exchange_api_;
   std::unordered_map<OrderIdentifier, Order> orders_;
   OrderLogger logger_;
-  Price pnl = 0;
-  Volume current_volume_ = 0;
+  Price pnl_ = 0;
+  Volume current_position_ = 0;
 
   Volume min_position_;
   Volume max_position_;
