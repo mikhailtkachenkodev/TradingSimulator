@@ -2,8 +2,9 @@
 
 OrderLogger::OrderLogger(const Config& config)
     : file_path_(config.orders_log_path) {
-  if (openFile()) {
-    throw std::runtime_error(openFile().value());
+  auto error = openFile();
+  if (error) {
+    throw std::runtime_error(error.value());
   }
 }
 
@@ -23,8 +24,10 @@ std::optional<std::string> OrderLogger::writeOrder(
       status_string = "Pending";
       break;
   }
-  file_ << std::format("{},{:.3f},{:.3f},{},{},{:.3f}\n", order_side_string,
-                       price, volume, status_string, error_text, total_pnl);
+  file_ << std::format("{},{:.3f},{:.3f},{},{},{:.3f}", order_side_string,
+                       price, volume, status_string, error_text, total_pnl)
+        << std::endl;
+  ;
 
   if (file_.bad()) {
     return std::format("OrderLogger: critical file write error");

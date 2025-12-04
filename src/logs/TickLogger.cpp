@@ -15,8 +15,9 @@ std::optional<std::string> TickLogger::writeTick(const Tick& tick) {
   auto timestamp_ms =
       std::chrono::duration_cast<std::chrono::milliseconds>(tick.timestamp);
 
-  file_ << std::format("{:%T},{:.3f},{:.3f}\n", timestamp_ms, tick.price,
-                       tick.volume);
+  file_ << std::format("{:%T},{:.3f},{:.3f}", timestamp_ms, tick.price,
+                       tick.volume)
+        << std::endl;
 
   if (file_.bad()) {
     return std::format("TickLogger: critical file write error");

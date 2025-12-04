@@ -15,7 +15,7 @@ Price TimeEMA::update(const Tick& tick) {
   std::chrono::nanoseconds deltaT = tick.timestamp - last_time_update_;
 
   if (deltaT <= 0ns) {
-    return tick.price;
+    return current_ma_price_;
   }
 
   const double dt_sec = std::chrono::duration<double>(deltaT).count();

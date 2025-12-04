@@ -1,12 +1,15 @@
 #include "Simulator.h"
 
+#include <iostream>
+#include <print>
+
 Simulator::Simulator(const Config& config)
     : currentTick_(0ns, config.initial_price, 0),
-      norm_dist_(0.0, 1.0),
-      gen_(std::random_device{}()),
-      config_(config),
       logger_(config),
-      tradingBot_(config) {}
+      config_(config),
+      tradingBot_(config),
+      gen_(std::random_device{}()),
+      norm_dist_(0.0, 1.0) {}
 
 void Simulator::Run() {
   for (uint64_t i = 0; i < config_.steps_count; ++i) {
@@ -14,8 +17,11 @@ void Simulator::Run() {
     currentTick_.timestamp += deltaT;
     currentTick_.price = calculateGBM(deltaT);
     currentTick_.volume = getRandomVolume();
-    logger_.writeTick(
+    auto err = logger_.writeTick(
         {currentTick_.timestamp, currentTick_.price, currentTick_.volume});
+    if (err) {
+      std::println(stderr, "{}", err.value());
+    }
     tradingBot_.onTick(currentTick_);
   }
 }
