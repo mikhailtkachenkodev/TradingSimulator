@@ -27,10 +27,9 @@ std::optional<std::string> OrderLogger::writeOrder(
   file_ << std::format("{},{:.3f},{:.3f},{},{},{:.3f}", order_side_string,
                        price, volume, status_string, error_text, total_pnl)
         << std::endl;
-  ;
 
-  if (file_.bad()) {
-    return std::format("OrderLogger: critical file write error");
+  if (file_.fail()) {
+    return std::format("OrderLogger: file write error");
   }
 
   return std::nullopt;
@@ -55,8 +54,8 @@ std::optional<std::string> OrderLogger::openFile() {
   file_ << std::format("{},{},{},{},{},{}\n", "Side", "Price", "Volume",
                        "ReplyStatus", "ErrorText", "PnL");
 
-  if (file_.bad()) {
-    return std::format("OrderLogger: critical file write error");
+  if (file_.fail()) {
+    return std::format("OrderLogger: file write error");
   }
 
   return std::nullopt;

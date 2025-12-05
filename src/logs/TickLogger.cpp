@@ -19,8 +19,8 @@ std::optional<std::string> TickLogger::writeTick(const Tick& tick) {
                        tick.volume)
         << std::endl;
 
-  if (file_.bad()) {
-    return std::format("TickLogger: critical file write error");
+  if (file_.fail()) {
+    return std::format("TickLogger: file write error");
   }
   return std::nullopt;
 }
@@ -31,7 +31,7 @@ std::optional<std::string> TickLogger::openFile() {
 
   if (ec) {
     return std::format("TickLogger: error on folder creation for path: {}",
-                       file_path_.string());  // Выход с кодом ошибки
+                       file_path_.string());
   }
 
   file_.open(file_path_);
@@ -43,8 +43,8 @@ std::optional<std::string> TickLogger::openFile() {
 
   file_ << std::format("{},{},{}\n", "Time", "Price", "Volume");
 
-  if (file_.bad()) {
-    return std::format("TickLogger: critical file write error");
+  if (file_.fail()) {
+    return std::format("TickLogger: file write error");
   }
 
   return std::nullopt;

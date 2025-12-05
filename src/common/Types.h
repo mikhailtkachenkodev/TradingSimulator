@@ -21,7 +21,6 @@ struct Order {
   OrderSide side;
   Price price;
   Volume volume;
-  std::chrono::nanoseconds timestamp;
 };
 
 struct Tick {

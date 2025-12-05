@@ -55,7 +55,12 @@ void OrderManager::fixOrder(OrderSide side, Price price, Volume volume) {
 
 void OrderManager::HandleRequestReply(OrderIdentifier id, Status reply_status,
                                       std::string_view reply_error) {
-  Order order = orders_[id];
+  auto it = orders_.find(id);
+  if (it == orders_.end()) {
+    return;
+  }
+
+  const Order& order = it->second;
 
   if (reply_status == Status::Executed) {
     fixOrder(order.side, order.price, order.volume);
@@ -64,5 +69,5 @@ void OrderManager::HandleRequestReply(OrderIdentifier id, Status reply_status,
   logger_.writeOrder(order.side, order.price, order.volume, reply_status,
                      std::string(reply_error), getTotalPnL(order.price));
 
-  orders_.erase(id);
+  orders_.erase(it);
 }

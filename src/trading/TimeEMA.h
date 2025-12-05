@@ -2,10 +2,9 @@
 #define TRADINGSIMULATOR_TIMEEMA_H
 
 #include <chrono>
+#include <optional>
 
 #include "common/Types.h"
-
-using namespace std::chrono_literals;
 
 class TimeEMA {
  public:
@@ -16,7 +15,7 @@ class TimeEMA {
 
  private:
   Price current_ma_price_ = 0;
-  std::chrono::nanoseconds last_time_update_ = -1ns;
+  std::optional<std::chrono::nanoseconds> last_time_update_;
   double neg_inv_tau_;
 };
 

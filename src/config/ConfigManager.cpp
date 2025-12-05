@@ -203,6 +203,9 @@ std::expected<Config, std::string> ConfigManager::Load(
         "rejection_probability must be between 0.0 and 100.0");
   }
 
+  if (config.price_variation <= 0)
+    return std::unexpected("price_variation must be > 0");
+
   if (config.steps_count < 1)
     return std::unexpected("steps_count must be >= 1");
 
